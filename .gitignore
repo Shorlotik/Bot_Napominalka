@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# База данных
+*.db
+*.sqlite
+*.sqlite3
+data/
+
+# Переменные окружения
+.env
+.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Логи
+*.log
+
+# Временные файлы
+*.tmp
+*.bak
+

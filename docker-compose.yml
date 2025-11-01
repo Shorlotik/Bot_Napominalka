@@ -1,0 +1,25 @@
+services:
+  reminder-bot:
+    build: .
+    container_name: telegram-reminder-bot
+    restart: unless-stopped
+    volumes:
+      # Монтируем директорию для базы данных, чтобы данные сохранялись при перезапуске
+      - ./data:/app/data
+      # Опционально: монтируем .env файл (если не используем переменные окружения)
+      # - ./.env:/app/.env
+    environment:
+      # Переменные окружения можно задать здесь или в .env файле
+      - BOT_TOKEN=${BOT_TOKEN:-8100359603:AAGN64ELoSMQFQs41lPrGOE3e86LZAmHXGU}
+      - USER_ID=${USER_ID:-491770320}
+      - ADMIN_ID=${ADMIN_ID:-791152212}
+      - START_HOUR=${START_HOUR:-10}
+      - END_HOUR=${END_HOUR:-18}
+      - DATABASE_NAME=${DATABASE_NAME:-data/reminder_bot.db}
+      - PYTHONUNBUFFERED=1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
