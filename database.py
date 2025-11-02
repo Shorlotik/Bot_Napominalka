@@ -5,7 +5,11 @@ from config import DATABASE_NAME
 
 def get_connection():
     """Получить соединение с базой данных"""
-    return sqlite3.connect(DATABASE_NAME)
+    conn = sqlite3.connect(DATABASE_NAME, check_same_thread=False)
+    # Включаем WAL режим для лучшей работы в многопоточном окружении
+    conn.execute('PRAGMA journal_mode=WAL')
+    conn.execute('PRAGMA synchronous=NORMAL')
+    return conn
 
 
 def init_database():

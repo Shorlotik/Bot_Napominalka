@@ -9,12 +9,16 @@ class Message:
     def add(text):
         """Добавить новое сообщение"""
         conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute('INSERT INTO messages (text) VALUES (?)', (text,))
-        conn.commit()
-        message_id = cursor.lastrowid
-        conn.close()
-        return message_id
+        try:
+            cursor = conn.cursor()
+            cursor.execute('INSERT INTO messages (text) VALUES (?)', (text,))
+            conn.commit()
+            # Принудительная синхронизация изменений
+            conn.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+            message_id = cursor.lastrowid
+            return message_id
+        finally:
+            conn.close()
     
     @staticmethod
     def get_all():
@@ -40,12 +44,16 @@ class Message:
     def delete(message_id):
         """Удалить сообщение"""
         conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute('DELETE FROM messages WHERE id = ?', (message_id,))
-        conn.commit()
-        deleted = cursor.rowcount > 0
-        conn.close()
-        return deleted
+        try:
+            cursor = conn.cursor()
+            cursor.execute('DELETE FROM messages WHERE id = ?', (message_id,))
+            conn.commit()
+            # Принудительная синхронизация изменений
+            conn.execute('PRAGMA wal_checkpoint(TRUNCATE)')
+            deleted = cursor.rowcount > 0
+            return deleted
+        finally:
+            conn.close()
     
     @staticmethod
     def count():
