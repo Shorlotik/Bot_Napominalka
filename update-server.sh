@@ -6,9 +6,19 @@ set -e
 
 echo "🔄 Обновление бота на сервере..."
 
+# Проверка какой версии docker compose используется
+if command -v docker-compose &> /dev/null; then
+    DOCKER_COMPOSE="docker-compose"
+elif docker compose version &> /dev/null; then
+    DOCKER_COMPOSE="docker compose"
+else
+    echo "❌ Docker Compose не найден!"
+    exit 1
+fi
+
 # Остановить контейнер
 echo "🛑 Останавливаю контейнер..."
-docker-compose down
+$DOCKER_COMPOSE down
 
 # Получить последние изменения (если еще не сделано)
 echo "📥 Проверяю обновления..."
@@ -16,21 +26,21 @@ git pull || echo "⚠️  Git pull не выполнен (возможно уж�
 
 # Пересобрать образ
 echo "🔨 Пересобираю Docker образ..."
-docker-compose build
+$DOCKER_COMPOSE build
 
 # Запустить контейнер
 echo "▶️  Запускаю контейнер..."
-docker-compose up -d
+$DOCKER_COMPOSE up -d
 
 # Подождать немного
 sleep 3
 
 # Показать логи
 echo "📋 Последние логи:"
-docker-compose logs --tail=30
+$DOCKER_COMPOSE logs --tail=30
 
 echo ""
 echo "✅ Обновление завершено!"
 echo "📊 Статус контейнера:"
-docker-compose ps
+$DOCKER_COMPOSE ps
 
